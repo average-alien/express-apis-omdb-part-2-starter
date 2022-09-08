@@ -1,0 +1,9 @@
+{
+  "development": {
+    "username": "sequelize",
+    "password": "sequelize",
+    "database": "express_api_omdb",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  }
+}

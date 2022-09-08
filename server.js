@@ -3,6 +3,7 @@ const express = require('express');
 const ejsLayouts = require('express-ejs-layouts');
 const app = express();
 const axios = require('axios')
+const db = require('./models')
 
 // Sets EJS as the view engine
 app.set('view engine', 'ejs');
@@ -36,6 +37,34 @@ app.get('/details/:id', (req, res) => {
       res.render('detail.ejs', { movie: response.data })
     })
     .catch(console.log)
+})
+
+// FAVES routes
+// GET /faves -- READ all faves and display them to the user
+app.get('/faves', async (req, res) => {
+  try {
+    // find all of the user's faves in the db
+    const allFaves = await db.fave.findAll()
+    // render a template with the user's faves
+    res.render('faves.ejs', { allFaves })
+  } catch(error) {
+    console.warn(error)
+    res.send('server error')
+  }
+})
+
+// POST /faves -- CREATE new fave and redirect to /faves to display user faves
+app.post('/faves', async (req, res) => {
+  try {
+    const [favorite, created] = await db.fave.findOrCreate({
+      where: req.body
+    })
+    // await db.fave.create(req.body)
+    res.redirect('/faves')
+  } catch(error) {
+    console.warn(error)
+    res.send('server error')
+  }
 })
 
 app.listen(process.env.PORT || 3000);
